@@ -5,12 +5,10 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // get all products
 router.get('/', async (req, res) => {
-  // find all products DONE
-  // be sure to include its associated Category and Tag data
   try {
     // finds all products
     const productData = await Product.findAll({
-      // ?finds all categories and tags associated with the found products
+      // finds all categories and tags associated with the found products
       include: [{model: Category}, {model: Tag}],
     });
     res.status(200).json(productData);
@@ -22,15 +20,13 @@ router.get('/', async (req, res) => {
 // get one product
 router.get('/:id', async (req, res) => {
   // find a single product by its `id`
-  // be sure to include its associated Category and Tag data
   try {
     // finds one entry based on the id parameter
     const productData = await Product.findByPk(req.params.id, {
-      // gets teh product associated with the category found by the id parameter
+      // gets the product associated with the category found by the id parameter
       include: [{model: Category}, {model: Tag}],
     });
     
-    // if there is no category/product associated with that id
     if (!productData) {
       res.status(404).json({ message: 'No product found with that id!' });
       return;
@@ -44,14 +40,6 @@ router.get('/:id', async (req, res) => {
 
 // create new product
 router.post('/', (req, res) => {
-  /* req.body should look like this...
-      {
-        product_name: "Basketball",
-        price: 200.00,
-        stock: 3,
-        tagIds: [1, 2, 3, 4]
-      }
-  */
   Product.create(req.body)
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
@@ -113,7 +101,6 @@ router.put('/:id', (req, res) => {
     })
     .then((updatedProductTags) => res.json(updatedProductTags))
     .catch((err) => {
-      // console.log(err);
       res.status(400).json(err);
     });
 });
@@ -128,7 +115,6 @@ router.delete('/:id', async (req, res) => {
         id: req.params.id,
       },
     });
-    // checking if the id exists in the db
     if (!productData) {
       res.status(404).json({ message: 'No product found with that id!' });
       return;
